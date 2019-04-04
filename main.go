@@ -91,6 +91,11 @@ func createTailers(pattern string, config tail.Config, events chan<- event, wait
 			continue
 		}
 
+		config.Location = &tail.SeekInfo{Offset: -500, Whence: 2}
+		if info.Size() < 500 {
+			config.Location.Offset = -info.Size()
+		}
+
 		t, err := tail.TailFile(match, config)
 		if err != nil {
 			log.Println("Error tailing", match, err)
