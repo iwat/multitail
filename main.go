@@ -106,6 +106,9 @@ func createTailers(pattern string, config tail.Config, events chan<- event, wait
 		waitGroup.Add(1)
 		go func(path string) {
 			defer waitGroup.Done()
+			if config.Location.Offset == -500 {
+				<-t.Lines // throw away one line
+			}
 			for line := range t.Lines {
 				events <- event{path, line}
 			}
